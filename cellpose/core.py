@@ -775,7 +775,7 @@ class UnetModel():
                 with autocast():
                     loss = self.loss_fn(lbl,y)
                 self.scaler.scale(loss).backward()
-                self.scaler.step(optimizer)
+                self.scaler.step(self.optimizer)
                 self.scaler.update()
             else:
                 loss = self.loss_fn(lbl,y)
