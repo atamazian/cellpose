@@ -926,7 +926,7 @@ class UnetModel():
                 rsc = diam_train[inds] / self.diam_mean if rescale else np.ones(len(inds), np.float32)
                 # now passing in the full train array, need the labels for distance field
                 imgi, lbl, scale = transforms.random_rotate_and_resize(
-                                        [train_data[i] for i in inds], Y=[train_labels[i] for i in inds],
+                                        [io.imread(train_data[i]) for i in inds], Y=[train_labels[i] for i in inds],
                                         rescale=rsc, scale_range=scale_range, unet=self.unet, inds=inds, omni=self.omni)
 
                 if self.unet and lbl.shape[1]>1 and rescale:
