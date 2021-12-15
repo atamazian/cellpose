@@ -7,8 +7,9 @@ import torch, gc
 gc.enable()
 
 import logging
+logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 models_logger = logging.getLogger(__name__)
-models_logger.setLevel(logging.DEBUG)
+#models_logger.setLevel(logging.DEBUG)
 
 from . import transforms, dynamics, utils, plot, omnipose
 from .core import UnetModel, assign_device, check_mkl, MXNET_ENABLED, parse_model_string
