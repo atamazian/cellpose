@@ -22,7 +22,7 @@ except Exception as err:
 
 import logging
 logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
-models_logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 def confirm_prompt(question):
     reply = None
