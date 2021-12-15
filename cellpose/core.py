@@ -23,6 +23,7 @@ try:
     from torch import nn
     import torch_optimizer as optim # for RADAM optimizer
     from torch.utils import mkldnn as mkldnn_utils
+    from torch.cuda.amp import autocast, GradScaler
     from . import resnet_torch
     TORCH_ENABLED = True
     torch_GPU = torch.device('cuda')
@@ -118,13 +119,14 @@ class UnetModel():
     def __init__(self, gpu=False, pretrained_model=False,
                     diam_mean=30., net_avg=True, device=None,
                     residual_on=False, style_on=False, concatenation=True,
-                    nclasses=4, torch=True, nchan=2):
+                    nclasses=4, torch=True, nchan=2, fp16=False):
         self.unet = True
         if torch:
             if not TORCH_ENABLED:
                 torch = False
         self.torch = torch
         self.mkldnn = None
+        self.fp16 = fp16
         if device is None:
             sdevice, gpu = assign_device(torch, gpu)
         self.device = device if device is not None else sdevice
@@ -136,6 +138,8 @@ class UnetModel():
         self.gpu = gpu if device is None else device_gpu
         if torch and not self.gpu:
             self.mkldnn = check_mkl(self.torch)
+        if torch and self.gpu and self.fp16:
+            self.scaler = GradScaler()
         self.pretrained_model = pretrained_model
         self.diam_mean = diam_mean
 
@@ -767,8 +771,15 @@ class UnetModel():
             else:
                 self.net.train()
             y = self.net(X)[0]
-            loss = self.loss_fn(lbl,y)
-            loss.backward()
+            if self.gpu and self.fp16:
+                with autocast():
+                    loss = self.loss_fn(lbl,y)
+                self.scaler.scale(loss).backward()
+                self.scaler.step(optimizer)
+                self.scaler.update()
+            else:
+                loss = self.loss_fn(lbl,y)
+                loss.backward()
             train_loss = loss.item()
             self.optimizer.step()
             train_loss *= len(x)
@@ -926,7 +937,7 @@ class UnetModel():
                 rsc = diam_train[inds] / self.diam_mean if rescale else np.ones(len(inds), np.float32)
                 # now passing in the full train array, need the labels for distance field
                 imgi, lbl, scale = transforms.random_rotate_and_resize(
-                                        [io.imread(train_data[i]) for i in inds], Y=[train_labels[i] for i in inds],
+                                        [train_data[i] for i in inds], Y=[train_labels[i] for i in inds],
                                         rescale=rsc, scale_range=scale_range, unet=self.unet, inds=inds, omni=self.omni)
 
                 if self.unet and lbl.shape[1]>1 and rescale:
