@@ -335,6 +335,9 @@ class CellposeModel(UnetModel):
         where model is saved (mx.gpu() or mx.cpu()), overrides gpu input,
         recommended if you want to use a specific GPU (e.g. mx.gpu(4))
         
+    fp16: bool (optional, default False)
+        use automatic mixed precision
+        
     model_dir: str (optional, default None)
         overwrite the built in model directory where cellpose looks for models
     
@@ -345,7 +348,7 @@ class CellposeModel(UnetModel):
     # still need to put the omni model trained on cellpose data into the right folder with the right name with the size model 
     def __init__(self, gpu=False, pretrained_model=False, 
                     model_type=None, net_avg=True, torch=True,
-                    diam_mean=30., device=None,
+                    diam_mean=30., device=None, fp16=False,
                     residual_on=True, style_on=True, concatenation=False,
                     nchan=2, nclasses=3, omni=False):
         if not torch:
@@ -403,7 +406,7 @@ class CellposeModel(UnetModel):
 
         # initialize network
         super().__init__(gpu=gpu, pretrained_model=False,
-                         diam_mean=self.diam_mean, net_avg=net_avg, device=device,
+                         diam_mean=self.diam_mean, net_avg=net_avg, device=device, fp16=fp16,
                          residual_on=residual_on, style_on=style_on, concatenation=concatenation,
                          nclasses=self.nclasses, torch=self.torch, nchan=nchan)
 
