@@ -21,7 +21,8 @@ except Exception as err:
     raise
 
 import logging
-logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
+models_logger = logging.getLogger(__name__)
 
 def confirm_prompt(question):
     reply = None
