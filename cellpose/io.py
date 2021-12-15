@@ -30,7 +30,7 @@ io_logger = logging.getLogger(__name__)
 io_logger.setLevel(logging.DEBUG)
 
 def logger_setup():
-    cp_dir = pathlib.Path.home().joinpath('.cellpose')
+    cp_dir = pathlib.Path.home().joinpath('logs')
     cp_dir.mkdir(exist_ok=True)
     log_file = cp_dir.joinpath('run.log')
     try:
