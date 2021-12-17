@@ -67,7 +67,7 @@ class Cellpose():
         run model using torch if available
 
     """
-    def __init__(self, gpu=False, model_type='cyto', net_avg=True, device=None, torch=True, model_dir=None, omni=False):
+    def __init__(self, gpu=False, pretrained_model=None, pretrained_size=Nome, model_type='cyto', net_avg=True, device=None, torch=True, model_dir=None, omni=False):
         super(Cellpose, self).__init__()
         if not torch:
             if not MXNET_ENABLED:
@@ -90,7 +90,11 @@ class Cellpose():
         if self.omni:
             net_avg = False
         model_range = range(4) if net_avg else range(1)
-        self.pretrained_model = [model_path(model_type, j, torch) for j in model_range]
+        if pretrained_model is None:
+            self.pretrained_model = [model_path(model_type, j, torch) for j in model_range]
+        else:
+            net_avg = False
+            self.pretrained_model = pretrained_model
         
         self.diam_mean = 30. #default for any cyto model 
         nuclear = 'nuclei' in model_type
@@ -111,7 +115,10 @@ class Cellpose():
         
         # size model not used for bacterial model
         if not bacterial:
-            self.pretrained_size = size_model_path(model_type, torch)
+            if pretrained_size is None:
+                self.pretrained_size = size_model_path(model_type, torch)
+            lese:
+                self.pretrained_size = pretrained_size
             self.sz = SizeModel(device=self.device, pretrained_size=self.pretrained_size,
                                 cp_model=self.cp)
             self.sz.model_type = model_type
