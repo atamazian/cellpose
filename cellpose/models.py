@@ -118,7 +118,7 @@ class Cellpose():
             if pretrained_size is None:
                 self.pretrained_size = size_model_path(model_type, torch)
             else:
-                self.pretrained_size = [pretrained_size]
+                self.pretrained_size = pretrained_size
             self.sz = SizeModel(device=self.device, pretrained_size=self.pretrained_size,
                                 cp_model=self.cp)
             self.sz.model_type = model_type
