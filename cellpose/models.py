@@ -67,7 +67,7 @@ class Cellpose():
         run model using torch if available
 
     """
-    def __init__(self, gpu=False, pretrained_model=None, pretrained_size=Nome, model_type='cyto', net_avg=True, device=None, torch=True, model_dir=None, omni=False):
+    def __init__(self, gpu=False, pretrained_model=None, pretrained_size=None, model_type='cyto', net_avg=True, device=None, torch=True, model_dir=None, omni=False):
         super(Cellpose, self).__init__()
         if not torch:
             if not MXNET_ENABLED:
