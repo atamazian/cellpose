@@ -117,7 +117,7 @@ class Cellpose():
         if not bacterial:
             if pretrained_size is None:
                 self.pretrained_size = size_model_path(model_type, torch)
-            lese:
+            else:
                 self.pretrained_size = pretrained_size
             self.sz = SizeModel(device=self.device, pretrained_size=self.pretrained_size,
                                 cp_model=self.cp)
