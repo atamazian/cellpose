@@ -898,14 +898,14 @@ class UnetModel():
         tic = time.time()
 
         # set learning rate schedule    
-        if SGD:
-            LR = np.linspace(0, self.learning_rate, 10)
-            if self.n_epochs > 250:
-                LR = np.append(LR, self.learning_rate*np.ones(self.n_epochs-100))
-                for i in range(10):
-                    LR = np.append(LR, LR[-1]/2 * np.ones(10))
-            else:
-                LR = np.append(LR, self.learning_rate*np.ones(max(0,self.n_epochs-10)))
+        #if SGD:
+        LR = np.linspace(0, self.learning_rate, 10)
+        if self.n_epochs > 250:
+            LR = np.append(LR, self.learning_rate*np.ones(self.n_epochs-100))
+            for i in range(10):
+                LR = np.append(LR, LR[-1]/2 * np.ones(10))
+        else:
+            LR = np.append(LR, self.learning_rate*np.ones(max(0,self.n_epochs-10)))
         
 
         lavg, nsum = 0, 0
