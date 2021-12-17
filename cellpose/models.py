@@ -94,7 +94,7 @@ class Cellpose():
             self.pretrained_model = [model_path(model_type, j, torch) for j in model_range]
         else:
             net_avg = False
-            self.pretrained_model = pretrained_model
+            self.pretrained_model = [pretrained_model]
         
         self.diam_mean = 30. #default for any cyto model 
         nuclear = 'nuclei' in model_type
@@ -118,7 +118,7 @@ class Cellpose():
             if pretrained_size is None:
                 self.pretrained_size = size_model_path(model_type, torch)
             else:
-                self.pretrained_size = pretrained_size
+                self.pretrained_size = [pretrained_size]
             self.sz = SizeModel(device=self.device, pretrained_size=self.pretrained_size,
                                 cp_model=self.cp)
             self.sz.model_type = model_type
